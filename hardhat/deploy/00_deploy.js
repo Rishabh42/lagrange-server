@@ -1,7 +1,6 @@
 require("hardhat-deploy")
 require("hardhat-deploy-ethers")
 
-const ethers = require("ethers")
 const fa = require("@glif/filecoin-address")
 const util = require("util")
 const request = util.promisify(require("request"))
@@ -53,13 +52,35 @@ module.exports = async ({ deployments }) => {
 
     console.log("Wallet Ethereum Address:", deployer.address)
 
-    await deployLogError("LagrangeDAOToken", {
+    let token = await deployLogError("LagrangeDAOToken", {
         from: deployer.address,
         args: [],
-        // maxPriorityFeePerGas to instruct hardhat to use EIP-1559 tx format
-        maxPriorityFeePerGas: priorityFee,
+        maxPriorityFeePerGas: network.name == "wallaby" ? priorityFee : "",
         log: true,
     })
+
+    await deployLogError("SpacePayment", {
+        from: deployer.address,
+        args: [token.address],
+        maxPriorityFeePerGas: network.name == "wallaby" ? priorityFee : "",
+        log: true,
+    })
+
+    if (token.newlyDeployed) {
+        let Token = await ethers.getContractFactory("LagrangeDAOToken")
+        let ladToken = Token.attach(token.address)
+
+        let tx = await ladToken.initialize(
+            deployer.address,
+            network.name == "wallaby"
+                ? {
+                      gasLimit: 1000000000,
+                      maxPriorityFeePerGas: priorityFee,
+                  }
+                : {}
+        )
+        console.log("initialize tx:", tx.hash)
+    }
 }
 
-module.exports.tags = ["LagrangeDAOToken"]
+module.exports.tags = ["LagrangeDAOToken", "SpacePayment"]

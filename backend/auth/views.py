@@ -22,6 +22,7 @@ def login():
 
     print("info: " + (str(request.json)))
 
+
     public_address = request.json[0]
     signature = request.json[1]
 

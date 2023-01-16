@@ -14,8 +14,7 @@ contract SpacePayment is Ownable {
     mapping(address => uint256) private balance;
 
     // rate is 1 LAD = $0.03
-    mapping(uint256 => uint256) public hardwareToPricePerEpoch;
-    uint256 public epochDuration = 1 hours;
+    mapping(uint256 => uint256) public hardwareToPricePerBlock;
 
     struct Space {
         address owner;
@@ -33,12 +32,12 @@ contract SpacePayment is Ownable {
     constructor(address tokenAddress) {
         ladToken = LagrangeDAOToken(tokenAddress);
 
-        hardwareToPricePerEpoch[1] = 0 ether;
-        hardwareToPricePerEpoch[2] = 1 ether;
-        hardwareToPricePerEpoch[3] = 20 ether;
-        hardwareToPricePerEpoch[4] = 30 ether;
-        hardwareToPricePerEpoch[5] = 35 ether;
-        hardwareToPricePerEpoch[6] = 105 ether;
+        hardwareToPricePerBlock[1] = 0 ether;
+        hardwareToPricePerBlock[2] = 1 ether;
+        hardwareToPricePerBlock[3] = 20 ether;
+        hardwareToPricePerBlock[4] = 30 ether;
+        hardwareToPricePerBlock[5] = 35 ether;
+        hardwareToPricePerBlock[6] = 105 ether;
     }
 
     function deposit(uint256 amount) public {
@@ -55,31 +54,31 @@ contract SpacePayment is Ownable {
         return balance[account];
     }
 
-    function buySpace(uint256 hardwareType, uint256 duration) public {
-        uint256 price = (hardwareToPricePerEpoch[hardwareType] * duration) / epochDuration;
+    function buySpace(uint256 hardwareType, uint256 blocks) public {
+        uint256 price = hardwareToPricePerBlock[hardwareType] * blocks;
         require(balance[msg.sender] >= price, "not enough balance");
 
         uint256 spaceId = spaceCounter.current();
         spaceCounter.increment();
 
-        uint256 expiryTime = block.number + duration;
+        uint256 expiryTime = block.number + blocks;
         balance[msg.sender] -= price;
         idToSpace[spaceId] = Space(msg.sender, hardwareType, expiryTime);
 
         emit SpaceCreated(spaceId, msg.sender, hardwareType, expiryTime);
     }
 
-    function extendSpace(uint256 spaceId, uint256 duration) public {
+    function extendSpace(uint256 spaceId, uint256 blocks) public {
         Space memory space = idToSpace[spaceId];
         require(space.expiryTime > 0, "space not found");
-        uint256 price = (hardwareToPricePerEpoch[space.hardwareType] * duration) / epochDuration;
+        uint256 price = hardwareToPricePerBlock[space.hardwareType] * blocks;
         require(balance[msg.sender] >= price, "not enough balance");
 
         balance[msg.sender] -= price;
         if (isExpired(spaceId)) {
-            idToSpace[spaceId].expiryTime += block.number + duration;
+            idToSpace[spaceId].expiryTime += block.number + blocks;
         } else {
-            idToSpace[spaceId].expiryTime += duration;
+            idToSpace[spaceId].expiryTime += blocks;
         }
 
         emit ExpiryExtended(spaceId, idToSpace[spaceId].expiryTime);
@@ -93,13 +92,8 @@ contract SpacePayment is Ownable {
         return idToSpace[spaceId];
     }
 
-    function changeEpochDuration(uint256 newDuration) public onlyOwner {
-        epochDuration = newDuration;
-        emit EpochDurationChanged(newDuration);
-    }
-
     function changeHardwarePrice(uint256 hardwareType, uint256 newPrice) public onlyOwner {
-        hardwareToPricePerEpoch[hardwareType] = newPrice;
+        hardwareToPricePerBlock[hardwareType] = newPrice;
         emit HardwarePriceChanged(hardwareType, newPrice);
     }
 

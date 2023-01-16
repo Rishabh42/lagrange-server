@@ -18,14 +18,9 @@ You can get a private key from a wallet provider [such as Metamask](https://meta
 
 ## Add your Private Key as an Environment Variable
 
-Add your private key as an environment variable by running this command:
+copy _.env.template_ to _.env_ in the parent directory.
 
-```
-export PRIVATE_KEY='abcdef'
-```
-
-\
-If you use a .env file, don't commit and push any changes to .env files that may contain sensitive information, such as a private key! If this information reaches a public GitHub repository, someone can use it to check if you have any Mainnet funds in that wallet address, and steal them!
+update the file with your own values.
 
 ## Get the Deployer Address
 
@@ -53,4 +48,4 @@ yarn hardhat deploy
 
 This will compile the contract and deploy it to the Wallaby network automatically!
 
-Keep note of the deployed contract address for the next step.
+Alternatively, you can

@@ -4,13 +4,13 @@ This folder contains Python scripts to transfer ERC-20 tokens.
 
 ## Set up
 
-### install packages:
+### Install Packages:
 
 ```
 pip install web3 python-dotenv
 ```
 
-### create your own .env
+### Create your own .env
 
 copy _.env.template_ to _.env_
 
@@ -24,44 +24,44 @@ DOMAIN="127.0.0.1"
 
 update the file with your own values.
 
-### fill blanks in script
+### Before Running
 
-In the pay-epoch.py script, you will need to provide:
+The current `token_contract_address` and `space_contract_address` are deployed on the Mumbai network. To deploy your own, follow the instructions in the `../hardhat` folder
 
-- `RECEIPIENT_ADDRESS`: who will receive the transferred tokens
-- `TOKEN_ADDRESS`: ERC-20 token address
-
-Optionally you can edit the epoch time and number of epochs (default is 10000 epochs of 1 hour)
-
-- `EPOCH_TIME` = time between epochs, in seconds (default 3600)
-- `NUM_EPOCH` = number of epochs (default 10000)
+You will need some LAD tokens to run the script successfully.
 
 ## Running
 
 Run the script:
 
 ```
-python pay-epoch.py
+python buy-space.py
 ```
 
 Example output
 
 ```
-Connected to blockchain, chain id is 80001. the latest block is 30,827,051
-Token: Lagrange DAO Token (LAD)
+Connected to blockchain, chain id is 80001. the latest block is 31,028,769
+
 wallet address: 0xA878795d2C93985444f1e2A077FA324d59C759b0
-native balance: 84.77245389266797
-token balance: 149999898.0 LAD
+account balance: 149,990,287.0 LAD
+epoch time: 1 block per 15 seconds
 
-epoch 1:
-current block: 30827051
-current timestamp: 1673454597
-paying 1 LAD...
-transaction hash: 0x85461d1896b16f117ec7cf0be3365b913834ac317a2a7e88d70c5f008bd30b5c
+ 1. CPU Only - 2 vCPU - 16 GiB - Free
+ 2. CPU Only - 8 vCPU - 32 GiB - $0.03 per hour - 1 LAD per block
+ 3. Nvidia T4 - 4 vCPU - 15 GiB - $0.60 per hour - 20 LAD per block
+ 4. Nvidia T4 - 8 vCPU - 30 GiB - $0.90 per hour - 30 LAD per block
+ 5. Nvidia A10G - 4 vCPU - 15 GiB - $1.05 per hour - 35 LAD per block
+ 6. Nvidia A10G - 12 vCPU - 46 GiB - $3.15 per hour - 105 LAD per block
 
-epoch 2:
-current block: 30827068
-current timestamp: 1673454632
-paying 1 LAD...
-transaction hash: 0xfcd8e4a2963eeb99b435829852d70bd3b7bc58de9d361e6e6f49910d3e02ef00
+Select the hardware (#): 3
+How many hours: 0.5
+Confirm purchasing hardware type 3 for 0.5 hours (120.0 blocks)?
+Ok [y/n]?y
+
+depositing 2400.0 LAD into contract...
+transaction hash: 0xd51309d7a951602b879b8ea1c8189d1eb7d211d5d43f3c0c938ebfcd4b434db9
+
+purchasing space...
+transaction hash: 0x7be13c16c175f690dc9883298aa6c6a57058b649038d73f12bf80cdf0b883bdb
 ```

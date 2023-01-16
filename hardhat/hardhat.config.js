@@ -2,9 +2,9 @@ require("@nomicfoundation/hardhat-toolbox")
 require("hardhat-deploy")
 require("hardhat-deploy-ethers")
 require("./tasks")
-require("dotenv").config()
+require("dotenv").config({ path: "../.env" })
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY
+const PRIVATE_KEY = process.env.private_key
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
     solidity: "0.8.17",
@@ -15,7 +15,7 @@ module.exports = {
             accounts: [PRIVATE_KEY],
         },
         mumbai: {
-            url: process.env.MUMBAI_RPC,
+            url: process.env.rpc_endpoint,
             accounts: [PRIVATE_KEY],
         },
     },
