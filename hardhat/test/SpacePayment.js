@@ -35,7 +35,8 @@ describe("SpacePayment", function () {
         it("Should mint tokens", async function () {
             accounts = await ethers.getSigners()
 
-            await token.initialize(u1)
+            let tx = await token.initialize(u1)
+            await tx.wait()
             let balance = await token.balanceOf(u1)
 
             expect(balance).to.equal(ethers.utils.parseEther("150000000"))

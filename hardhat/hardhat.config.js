@@ -17,6 +17,8 @@ module.exports = {
         mumbai: {
             url: process.env.rpc_endpoint,
             accounts: [PRIVATE_KEY],
+            gas: 20000000,
+            blockGasLimit: 12000000,
         },
     },
     paths: {
